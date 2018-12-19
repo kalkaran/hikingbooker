@@ -110,23 +110,28 @@ def login(session, url, password):
     data = dict({
         'ctl01$Rptheadermenu$ctl00$HidURL':	'/Default.aspx',
         'ctl01$Rptheadermenu$ctl01$HidURL':	'/Facilities/SearchViewGW.aspx',
-        'ctl01$mainContent$txtEmail' : configdata[email],
-        'ctl01$mainContent$txtPassword' : configdata[inPassword],
+        'ctl01$mainContent$txtEmail' : configdata['loginemail'],
+        'ctl01$mainContent$txtPassword' : configdata['docpassword'],
     })
 
 
 
 
 def testbed(url):
-    url = "https://bookings.doc.govt.nz/Saturn/Customers/Login.aspx"
-
+    configdata = get_config()
     data = dict({
         'ctl01$Rptheadermenu$ctl00$HidURL':	'/Default.aspx',
         'ctl01$Rptheadermenu$ctl01$HidURL':	'/Facilities/SearchViewGW.aspx',
-        'ctl01$mainContent$txtEmail' : configdata[email],
-        'ctl01$mainContent$txtPassword' : configdata[inPassword],
+        'ctl01$mainContent$txtEmail': configdata['loginemail'],
+        'ctl01$mainContent$txtPassword': configdata['docpassword'],
     })
 
-    
+    r = requests.post(url, data=data)
+    return r.text
+
+
+url = "https://bookings.doc.govt.nz/Saturn/Customers/Login.aspx"
+with open("test.html","w+") as f:
+    f.write(testbed(url))
 
 
