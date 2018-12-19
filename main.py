@@ -27,18 +27,8 @@ pip install twilio
 #probably see if I can hook up twilio to send a text message to me
 
 
-#not sure if there is a csfr token but I am adding it to check.
-
-def get_csfr_token(text):
-    m = re.search('name="csfr_token" value="([^"]+)"', text)
-    return m.group(1)
-
-
-
-
 def get_config():
-    config = configparser.ConfigParser()
-    config.read("./config.ini")
+    '''returns the parameters for logging in and using notification services'''
     '''
     example config file
     [simplesettings]
@@ -49,7 +39,8 @@ def get_config():
     number = 0101010101
     receiver = 01010101
     '''
-
+    config = configparser.ConfigParser()
+    config.read("./config.ini")
 
     #for doc website
     configemail = config.get('simplesettings', 'email')
@@ -72,25 +63,8 @@ def get_config():
     return data
 
 
-
-def login(session, url, password):
-    r = session.get(url)
-    r.raise_for_status()
-    csfr_token = get_csfr_token(r.text)
-    configdata = get_config()
-
-    data = dict({
-        'inUsername' : configdata[email],
-        'inPassword' : configdata[inPassword],
-        'inSessionSecurity' : 'on',
-        'sublogin2' : 'LogIn',
-        'csfr_token' : csfr_token,
-    })
-
-
-
-
 def sendtext(text):
+    '''sends text message containing arguement based on parameters set in config file'''
     configdata = get_config()
 
     account_sid = configdata['account_sid']
@@ -101,13 +75,58 @@ def sendtext(text):
     client = Client(account_sid, auth_token)
 
     message = client.messages \
-    .create(
-    body=text,
-    from_=number,
-    to=receiver
+        .create(
+        body=text,
+        from_=number,
+        to=receiver
     )
 
     print(message.sid)
 
-sendtext("test")
+
+
+#not sure if there is a csfr token but I am adding it to check.
+
+def get_csfr_token(text):
+    m = re.search('name="csfr_token" value="([^"]+)"', text)
+    return m.group(1)
+
+def login(session, url, password):
+    r = session.get(url)
+    r.raise_for_status()
+    configdata = get_config()
+
+    '''
+    ctl01$Hidscreenresolutionmain	
+    ctl01$hdnCulture	
+    ctl01$Rptheadermenu$ctl00$HidURL	/Default.aspx
+    ctl01$Rptheadermenu$ctl01$HidURL	/Facilities/SearchViewGW.aspx
+    ctl01$hdnClearCustomerKiosk	
+    ctl01$mainContent$txtEmail	test@test.com
+    ctl01$mainContent$txtPassword	fart
+    
+    '''
+
+    data = dict({
+        'ctl01$Rptheadermenu$ctl00$HidURL':	'/Default.aspx',
+        'ctl01$Rptheadermenu$ctl01$HidURL':	'/Facilities/SearchViewGW.aspx',
+        'ctl01$mainContent$txtEmail' : configdata[email],
+        'ctl01$mainContent$txtPassword' : configdata[inPassword],
+    })
+
+
+
+
+def testbed(url):
+    url = "https://bookings.doc.govt.nz/Saturn/Customers/Login.aspx"
+
+    data = dict({
+        'ctl01$Rptheadermenu$ctl00$HidURL':	'/Default.aspx',
+        'ctl01$Rptheadermenu$ctl01$HidURL':	'/Facilities/SearchViewGW.aspx',
+        'ctl01$mainContent$txtEmail' : configdata[email],
+        'ctl01$mainContent$txtPassword' : configdata[inPassword],
+    })
+
+    
+
 
