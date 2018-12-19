@@ -39,6 +39,20 @@ def get_csfr_token(text):
 def get_config():
     config = configparser.ConfigParser()
     config.read("./config.ini")
+    '''
+    [simplesettings]
+email = mail@example.com
+docpassword = password
+account_sid = AC...
+auth_token = 39abdad23123
+number = 0101010101
+receiver = 01010101
+    
+    
+    
+    '''
+
+
     #for doc website
     configemail = config.get('simplesettings', 'email')
     configdocpassword = config.get('simplesettings', 'docpassword')
@@ -78,7 +92,7 @@ def login(session, url, password):
 
 
 
-text = "Join Earth's mightiest heroes. Like Kevin Bacon."
+
 def sendtext(text):
     data = get_config()
 
@@ -98,4 +112,5 @@ def sendtext(text):
 
     print(message.sid)
 
+sendtext("helloski puffin time")
 
