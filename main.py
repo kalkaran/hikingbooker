@@ -40,16 +40,14 @@ def get_config():
     config = configparser.ConfigParser()
     config.read("./config.ini")
     '''
+    example config file
     [simplesettings]
-email = mail@example.com
-docpassword = password
-account_sid = AC...
-auth_token = 39abdad23123
-number = 0101010101
-receiver = 01010101
-    
-    
-    
+    email = mail@example.com
+    docpassword = password
+    account_sid = AC...
+    auth_token = 39abdad23123
+    number = 0101010101
+    receiver = 01010101
     '''
 
 
@@ -70,7 +68,7 @@ receiver = 01010101
         'auth_token': configauth_token,
         'number': confignumber,
         'receiver': configreceiver,
-    })
+        })
     return data
 
 
@@ -79,7 +77,6 @@ def login(session, url, password):
     r = session.get(url)
     r.raise_for_status()
     csfr_token = get_csfr_token(r.text)
-
     configdata = get_config()
 
     data = dict({
@@ -94,12 +91,12 @@ def login(session, url, password):
 
 
 def sendtext(text):
-    data = get_config()
+    configdata = get_config()
 
-    account_sid = data['account_sid']
-    auth_token = data['auth_token']
-    number = data['number']
-    receiver = data['receiver']
+    account_sid = configdata['account_sid']
+    auth_token = configdata['auth_token']
+    number = configdata['number']
+    receiver = configdata['receiver']
 
     client = Client(account_sid, auth_token)
 
@@ -112,5 +109,5 @@ def sendtext(text):
 
     print(message.sid)
 
-sendtext("helloski puffin time")
+sendtext("test")
 
