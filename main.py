@@ -4,7 +4,7 @@ import requests
 import re
 import sys
 import configparser
-
+from bs4 import BeautifulSoup
 
 ## Twilio ##
 from twilio.rest import Client
@@ -120,14 +120,22 @@ def login(session, url, password):
 def testbed(url):
     configdata = get_config()
     data = dict({
+        'ctl01$Hidscreenresolutionmain': '',
+        'ctl01$hdnCulture': "",
         'ctl01$Rptheadermenu$ctl00$HidURL':	'/Default.aspx',
         'ctl01$Rptheadermenu$ctl01$HidURL':	'/Facilities/SearchViewGW.aspx',
         'ctl01$mainContent$txtEmail': configdata['loginemail'],
         'ctl01$mainContent$txtPassword': configdata['docpassword'],
+        '__EVENTTARGET': 'ctl01$mainContent$bLogin',
+        '__EVENTARGUMENT': '',
     })
-
-    r = requests.post(url, data=data)
-    return r.text
+    with requests.Session() as r:
+        page = r.get(url)
+        soup = BeautifulSoup(page.content)
+        data["___VIEWSTATE"] = soup.select_one("#__VIEWSTATE")["value"]
+        data["__VIEWSTATEGENERATOR"] = soup.select_one("#__VIEWSTATEGENERATOR")["value"]
+        r = requests.post(url, data=data)
+        return r.text
 
 
 url = "https://bookings.doc.govt.nz/Saturn/Customers/Login.aspx"
